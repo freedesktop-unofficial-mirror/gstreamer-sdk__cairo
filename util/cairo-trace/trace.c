@@ -521,7 +521,9 @@ _fini_trace (void)
 static void
 _trace_dtostr (char *buffer, size_t size, double d)
 {
+#ifndef __BIONIC__
     struct lconv *locale_data;
+#endif
     const char *decimal_point;
     int decimal_point_len;
     char *p;
@@ -532,9 +534,14 @@ _trace_dtostr (char *buffer, size_t size, double d)
     if (d == 0.0)
 	d = 0.0;
 
+#ifndef __BIONIC__
     locale_data = localeconv ();
     decimal_point = locale_data->decimal_point;
     decimal_point_len = strlen (decimal_point);
+#else
+    decimal_point = ".";
+    decimal_point_len = 1;
+#endif
 
     /* Using "%f" to print numbers less than 0.1 will result in
      * reduced precision due to the default 6 digits after the

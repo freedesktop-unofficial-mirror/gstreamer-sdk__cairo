@@ -301,7 +301,9 @@ _cairo_output_stream_write_hex_string (cairo_output_stream_t *stream,
 static void
 _cairo_dtostr (char *buffer, size_t size, double d, cairo_bool_t limited_precision)
 {
+#ifndef __BIONIC__
     struct lconv *locale_data;
+#endif
     const char *decimal_point;
     int decimal_point_len;
     char *p;
@@ -312,9 +314,14 @@ _cairo_dtostr (char *buffer, size_t size, double d, cairo_bool_t limited_precisi
     if (d == 0.0)
 	d = 0.0;
 
+#ifndef __BIONIC__
     locale_data = localeconv ();
     decimal_point = locale_data->decimal_point;
     decimal_point_len = strlen (decimal_point);
+#else
+    decimal_point = ".";
+    decimal_point_len = 1;
+#endif
 
     assert (decimal_point_len != 0);
 
